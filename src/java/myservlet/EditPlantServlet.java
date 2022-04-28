@@ -6,12 +6,14 @@
 package myservlet;
 
 import dao.PlantDao;
+import dto.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -32,28 +34,37 @@ public class EditPlantServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            String txtSearch = request.getParameter("txtSearch");
-            String pid = request.getParameter("pid");
-            String pname = request.getParameter("pname");
-            String price = request.getParameter("price");
-            String imgpath = request.getParameter("imgpath");
-            String imgpathOriginal = request.getParameter("imgpathOriginal");
-            if (imgpath.isEmpty()){
-                imgpath = imgpathOriginal;
+            HttpSession session = request.getSession();
+            if (session != null) {
+                Account user = (Account) session.getAttribute("acc");
+
+                if (user != null && user.getRole() == 1) {
+                    String txtSearch = request.getParameter("txtSearch");
+                    String pid = request.getParameter("pid");
+                    String pname = request.getParameter("pname");
+                    String price = request.getParameter("price");
+                    String imgpath = request.getParameter("imgpath");
+                    String imgpathOriginal = request.getParameter("imgpathOriginal");
+                    if (imgpath.isEmpty()) {
+                        imgpath = imgpathOriginal;
+                    }
+                    imgpath = imgpath.substring(imgpath.lastIndexOf("images"));
+
+                    String description = request.getParameter("description");
+                    String status = request.getParameter("status");
+                    String cateid = request.getParameter("cateid");
+
+                    int rs = PlantDao.updatePlant(new Integer(pid), pname, new Integer(price), imgpath, description, new Integer(status), new Integer(cateid));
+                    if (rs > 0) {
+                        response.sendRedirect("SearchPlantServlet?txtname=" + txtSearch);
+                    }
+                } else {
+                    response.sendRedirect("index.jsp");
+                } 
+            }else {
+                response.sendRedirect("index.jsp");
             }
-            imgpath = imgpath.substring(imgpath.lastIndexOf("images"));
-            
-            String description = request.getParameter("description");
-            String status = request.getParameter("status");
-            String cateid = request.getParameter("cateid");
-            
-            int rs = PlantDao.updatePlant(new Integer(pid), pname, new Integer(price), imgpath, description, new Integer(status), new Integer(cateid));
-            if (rs > 0){
-                response.sendRedirect("SearchPlantServlet?txtname=" + txtSearch);
-            }
-            
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

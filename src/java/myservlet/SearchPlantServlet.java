@@ -36,11 +36,9 @@ public class SearchPlantServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String name = request.getParameter("txtname");
             ArrayList<Plant> list = PlantDao.getPlants1(name);
-            if (list != null){
-                request.setAttribute("list", list);
-                request.setAttribute("name", name);
-                request.getRequestDispatcher("managePlantPage.jsp").forward(request, response);
-            }
+            request.setAttribute("list", list);
+            request.setAttribute("name", name);
+            request.getRequestDispatcher("managePlantPage.jsp").forward(request, response);
         } catch(Exception e){
             e.printStackTrace();
         }

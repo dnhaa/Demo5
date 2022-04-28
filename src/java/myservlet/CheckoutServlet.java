@@ -39,35 +39,38 @@ public class CheckoutServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             //kiem tra thong tin login nguoi dung
             HttpSession session = request.getSession();
-            Account acc = (Account)session.getAttribute("acc");
-            if (acc == null){
+            Account acc = (Account) session.getAttribute("acc");
+            if (acc == null) {
                 response.sendRedirect("loginPage.jsp?warning=dangnhap");
             } else {
-                //lay acc id cua user 
-                int accid = acc.getAccid();
-                Date d = new Date(System.currentTimeMillis());
-                String orderdate = d.toString();
-                
-                //cach 1: lay getDate, getMonth, getYear
-                //cach 2: sua thanh datetime
-                
-                //insert new order, insert orderdetail
-                HashMap<String, Integer> cart = (HashMap<String, Integer>)session.getAttribute("cart");
-                if (cart != null && cart.size() >0){
-                    int result = OrderDao.checkout(orderdate, accid, cart);
-                    if (result > 0){
-                        // xoa cart object r khoi session
-                        session.removeAttribute("cart");
-                        response.sendRedirect("index.jsp");
-                        
-                        //sau khi checkout nen cho ngta check lich su
-                    }
-                    
+                if (acc.getRole() == 1) {
+                    response.sendRedirect("viewCartPage.jsp?warning1=admin");
                 } else {
-                    response.sendRedirect("index.jsp");
+                    //lay acc id cua user 
+                    int accid = acc.getAccid();
+                    Date d = new Date(System.currentTimeMillis());
+                    String orderdate = d.toString();
+
+                //cach 1: lay getDate, getMonth, getYear
+                    //cach 2: sua thanh datetime
+                    //insert new order, insert orderdetail
+                    HashMap<String, Integer> cart = (HashMap<String, Integer>) session.getAttribute("cart");
+                    if (cart != null && cart.size() > 0) {
+                        int result = OrderDao.checkout(orderdate, accid, cart);
+                        if (result > 0) {
+                            // xoa cart object r khoi session
+                            session.removeAttribute("cart");
+                            response.sendRedirect("index.jsp");
+
+                            //sau khi checkout nen cho ngta check lich su
+                        }
+
+                    } else {
+                        response.sendRedirect("viewCartPage.jsp?warning2=cart");
+                    }
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

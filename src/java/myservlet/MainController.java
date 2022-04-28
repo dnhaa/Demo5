@@ -74,6 +74,7 @@ public class MainController extends HttpServlet {
                 case "create account":
                     url = "RegisterServlet";
                     break;
+                
             }
             request.getRequestDispatcher(url).forward(request, response);
         }

@@ -4,6 +4,89 @@
     Author     : ACER
 --%>
 
+
+
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="/WEB-INF/tlds/mytag" prefix="ha"%>
+
+<jsp:include page="header.jsp" />
+<!DOCTYPE html>
+<html>
+    <head>
+       
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Homepage</title>
+    </head>
+    <body>
+         <c:if test="${not empty param.warning}">
+            <script>
+                alert("1 san pham da duoc them vao gio hang");
+            </script>
+        </c:if>
+        <table cellspacing="5">
+           
+            <c:set var="list" value="${requestScope.listAccounts}" />
+            <c:if test="${not empty list}">
+                 <tr>
+                    <th>Id</th>
+                    <th>Password</th>
+                    <th>Email</th>
+                    <th>Full name</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+                <c:forEach var="acc" items="${list}">
+                    <tr>
+                        <td>${acc.accid}</td>
+                        <td>${acc.password}</td>
+                        <td>${acc.email}</td>
+                        <td>${acc.fullname}</td>
+                        <td>${acc.phone}</td>
+                        <td>${acc.status}</td>
+                        <td>${acc.role}</td>
+                        <td>
+                            <c:if test="${acc.role != 1}">
+                                <a href="UpdateStatusServlet?accid=${acc.accid}&oldstatus=${acc.status}">Block/Unblock</a>
+                            </c:if>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:if>
+    </table>
+
+    <c:if test="${empty list and !empty requestScope.txtsearch}">
+        <h3>No record found</h3>
+    </c:if>
+    <ha:getAllPlants></ha:getAllPlants>
+    <c:set var="plantList" value="${plantList}"/>
+    <c:if test="${not empty plantList}">
+        <c:forEach var="p" items="${plantList}">
+            <table>
+                <tr>
+                    <td rowspan="4"><img src="${p.imgpath}" style="width: 170px; height: 100px" /></td>
+                    <td>${p.pid}</td>
+                </tr>
+                <tr>
+                    <td>${p.pname}</td>
+                </tr>
+                <tr>
+                    <td>${p.price}</td>
+                </tr>
+                <tr>
+                    <td><a href="MainController?action=addtocart&id=${p.pid}">Add to cart</a></td>
+                </tr>
+            </table>
+        </c:forEach>
+    </c:if>
+
+
+
+
+
+
+<%--
 <%@page import="dao.PlantDao"%>
 <%@page import="dto.Plant"%>
 <%@page import="dto.Account"%>
@@ -103,3 +186,4 @@
         
     </body>
 </html>
+--%>

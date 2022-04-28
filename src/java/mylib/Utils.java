@@ -20,7 +20,7 @@ public class Utils {
         String instanceName = "NGANHA";
         String port = "1433";
         String uid = "sa";
-        String pwd = "1";
+        String pwd = "12345";
         String db = "PlantShop";
         String drive = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
         String url = "jdbc:sqlserver://" + IP + "\\" + instanceName +":"+port+";databaseName=" + db + ";username=" + uid + ";password=" + pwd;
